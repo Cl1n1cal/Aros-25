@@ -2,9 +2,10 @@
 
 .extern instr_mov
 
-.global _start
+.global interpret_instr
+.type interpret_instr, @function
 
-_start:
+interpret_instr:
     // Find the matching opcode 
     // r0 : opcode
     // r1 : reg
@@ -13,12 +14,12 @@ _start:
     cmp r0, #0x1 // mov
     mov r0, r1
     mov r1, r2
-    beq instr_mov
-    b error
+    bl instr_mov
+    bx
 
 error:
-    // Exit with error 0xff
-    mov r0, #0xff
+    // Exit with error 0x1
+    mov r0, #0x1
     mov r7, #1
     swi 0
 

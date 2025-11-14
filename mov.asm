@@ -7,6 +7,8 @@
 .extern e
 
 .global instr_mov
+.type instr_mov, @function
+
 instr_mov:
     // Find the correct register to load the value into 
     // r0 : register
@@ -51,10 +53,7 @@ mov_e:
     b done
 
 done:
-    // Exit routine
-    mov r0, #0
-    mov r7, #1
-    swi 0
+    bx
 
 error:
     // Exit with error 0xff
