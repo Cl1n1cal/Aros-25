@@ -3,7 +3,6 @@
 .extern instr_mov
 
 .global interpret_instr
-.type interpret_instr, @function
 
 interpret_instr:
     // Find the matching opcode 
@@ -14,8 +13,8 @@ interpret_instr:
     cmp r0, #0x1 // mov
     mov r0, r1
     mov r1, r2
-    bl instr_mov
-    bx
+//    bl instr_mov
+    bx lr
 
 error:
     // Exit with error 0x1

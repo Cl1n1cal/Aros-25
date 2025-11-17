@@ -1,9 +1,15 @@
 // string.asm : Different string related functions
+.section .data
+newline_char: .asciz "\n"
 
 .section .text
 
+.extern error
+
 .global print
-.global get_str_len
+.global print_newline
+.global strlen
+
 
 print:
     // Prints a string to the terminal
@@ -11,15 +17,22 @@ print:
     // r1: string length
 
     // Setup write syscall
-    mov r7, #4
+    mov r7, #0x4
     mov r2, r1
     mov r1, r0
-    mov r0, #1
+    mov r0, #0x1
     swi 0
     bx lr
 
+print_newline:
+    mov r0, #0x1
+    ldr r1, =newline_char
+    mov r2, #0x1
+    mov r7, #0x4
+    swi 0
+    bx lr
 
-get_str_len:
+strlen:
     // Returns the length of a string in r0, not couting null byte
     // Supports strings up to 0x100 characters
     // r0 : string pointer
@@ -42,8 +55,3 @@ done:
     mov r0, r2
     bx lr
 
-// Return error 1
-error:
-    mov r7, #0x1
-    mov r0, #0x1
-    swi 0

@@ -6,12 +6,17 @@ mystr: .asciz "Hello world\n"
 .section .text
 
 .extern print
+.extern strlen
 
 .global _start
 
 _start:
-    // call print
-    mov r1, #0xc
+    // call get_str_len
+    ldr r0, =mystr
+    bl strlen
+
+    // call print using the result of strlen
+    mov r1, r0
     ldr r0, =mystr
     bl print
 
