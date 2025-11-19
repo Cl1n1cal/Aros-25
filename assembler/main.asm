@@ -1,8 +1,8 @@
 .section .text
 
-.global hello
+.global _start
 
-hello:
+_start:
 	mov r0, #0x1
 
 .section .data

@@ -2,7 +2,7 @@
 AS = arm-linux-gnueabi-as
 
 LD = arm-linux-gnueabi-gcc-13
-LD-FLAGS = -nostdlib
+LD_FLAGS = -nostdlib
 
 # .asm directories
 LIBS_DIR := libs
@@ -25,9 +25,21 @@ CPU_OBJS = $(patsubst $(CPU_DIR)/%.asm, $(CPU_BUILD_DIR)/%.o, $(CPU_SRCS))
 ASSEMBLER_OBJS = $(patsubst $(ASSEMBLER_DIR)/%.asm, $(ASSEMBLER_BUILD_DIR)/%.o, $(ASSEMBLER_SRCS))
 LIBS_OBJS = $(patsubst $(LIBS_DIR)/%.asm, $(LIBS_BUILD_DIR)/%.o, $(LIBS_SRCS))
 
-all : libs cpu assembler
+# Object directories
+CPU_ASSEMBLED_OBJS = $(wildcard $(CPU_BUILD_DIR)/*.o)
+ASSEMBLER_ASSEMBLED_OBJS = $(wildcard $(ASSEMBLER_BUILD_DIR)/*.o)
+LIBS_ASSEMBLED_OBJS = $(wildcard $(LIBS_BUILD_DIR)/*.o)
 
-# TARGET cpu
+all : Aros-25-cpu Aros-25-as
+
+# Linking
+Aros-25-cpu: $(CPU_OBJS) $(LIBS_OBJS)
+	$(LD) $^ -o $(BUILD_DIR)/Aros-25-cpu $(LD_FLAGS)
+
+Aros-25-as: $(ASSEMBLER_OBJS) $(LIBS_OBJS)
+	$(LD) $^ -o $(BUILD_DIR)/Aros-25-as $(LD_FLAGS)
+
+# Assembling
 cpu : $(CPU_BUILD_DIR) $(CPU_OBJS)
 assembler : $(ASSEMBLER_BUILD_DIR) $(ASSEMBLER_OBJS)
 libs : $(LIBS_BUILD_DIR) $(LIBS_OBJS)
