@@ -7,7 +7,6 @@
 .extern e
 
 .global instr_mov
-.type instr_mov, @function
 
 instr_mov:
     // Find the correct register to load the value into 
@@ -53,7 +52,7 @@ mov_e:
     b done
 
 done:
-    bx
+    bx lr
 
 error:
     // Exit with error 0xff

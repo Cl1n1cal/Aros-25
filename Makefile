@@ -1,25 +1,54 @@
-CC = arm-linux-gnueabi-as
+# Assembler and linker
+AS = arm-linux-gnueabi-as
+
 LD = arm-linux-gnueabi-gcc-13
-FLAGS = -nostdlib
+LD-FLAGS = -nostdlib
 
-main : main.o interpret_instr.o error.o open_file.o string.o memory_handler.o
-	$(LD) main.o interpret_instr.o error.o open_file.o string.o memory_handler.o -o main $(FLAGS)
+# .asm directories
+LIBS_DIR := libs
+BUILD_DIR := build
+CPU_DIR := cpu
+ASSEMBLER_DIR := assembler
 
-main.o : main.asm
-	$(CC) main.asm -o main.o
+# .o directories
+CPU_BUILD_DIR := build/cpu_obj
+ASSEMBLER_BUILD_DIR := build/assembler_obj
+LIBS_BUILD_DIR := build/libs_obj
 
-interpret_instr.o : interpret_instr.asm
-	$(CC) interpret_instr.asm -o interpret_instr.o
+# Find-all-files patterns .asm
+CPU_SRCS = $(wildcard $(CPU_DIR)/*.asm)
+ASSEMBLER_SRCS = $(wildcard $(ASSEMBLER_DIR)/*.asm)
+LIBS_SRCS = $(wildcard $(LIBS_DIR)/*.asm)
 
-open_file.o : open_file.asm
-	$(CC) open_file.asm -o open_file.o
+# Conversion pattern
+CPU_OBJS = $(patsubst $(CPU_DIR)/%.asm, $(CPU_BUILD_DIR)/%.o, $(CPU_SRCS))
+ASSEMBLER_OBJS = $(patsubst $(ASSEMBLER_DIR)/%.asm, $(ASSEMBLER_BUILD_DIR)/%.o, $(ASSEMBLER_SRCS))
+LIBS_OBJS = $(patsubst $(LIBS_DIR)/%.asm, $(LIBS_BUILD_DIR)/%.o, $(LIBS_SRCS))
 
-string.o : string.asm
-	$(CC) string.asm -o string.o
+all : libs cpu assembler
 
-error.o : error.asm
-	$(CC) error.asm -o error.o
+# TARGET cpu
+cpu : $(CPU_BUILD_DIR) $(CPU_OBJS)
+assembler : $(ASSEMBLER_BUILD_DIR) $(ASSEMBLER_OBJS)
+libs : $(LIBS_BUILD_DIR) $(LIBS_OBJS)
 
-memory_handler.o : memory_handler.asm
-	$(CC) memory_handler.asm -o memory_handler.o
+$(CPU_BUILD_DIR)/%.o : $(CPU_DIR)/%.asm | $(CPU_BUILD_DIR)
+	$(AS) $< -o $@
 
+$(ASSEMBLER_BUILD_DIR)/%.o : $(ASSEMBLER_DIR)/%.asm | $(ASSEMBLER_BUILD_DIR)
+	$(AS) $< -o $@
+
+$(LIBS_BUILD_DIR)/%.o : $(LIBS_DIR)/%.asm | $(LIBS_BUILD_DIR)
+	$(AS) $< -o $@
+
+$(CPU_BUILD_DIR):
+	mkdir -p $(CPU_BUILD_DIR)
+
+$(ASSEMBLER_BUILD_DIR):
+	mkdir -p $(ASSEMBLER_BUILD_DIR)
+
+$(LIBS_BUILD_DIR):
+	mkdir -p $(LIBS_BUILD_DIR)
+
+clean:
+	rm -rf build
