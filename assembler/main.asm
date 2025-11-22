@@ -25,16 +25,29 @@ _start:
     // Open the first argument early to prevent race TOCTOU
     add sp, sp, #0x8
     ldr r0, [sp]
-    bl open_file
+    bl fopen
 
     // Store the file desc. in fhandle
     ldr r1, =fhandle
     str r0, [r1]
 
     // Allocate memory before reading the file
-    ldr r0, [mslot0]
+    ldr r0, =mslot0
     mov r1, #0x1000
     bl alloc_mem
+
+    // Read from the file and into the allocated memory
+    // r0
+    ldr r1, =fhandle
+    ldr r0, [r1]
+    // r1
+    ldr r2, =mslot0
+    ldr r1, [r2]
+    // r2
+    ldr r2, =mslot0_s // r2
+    ldr r2, [r2]
+
+
 
 print_err_and_exit:
     ldr r0, =error_msg

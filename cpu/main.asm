@@ -9,7 +9,7 @@ load_msg: .asciz "[Aros-25] Loading program argument: "
 .extern print
 .extern strlen
 .extern print_newline
-.extern open_file
+.extern fopen
 .extern alloc_mem
 .extern free_mem
 
@@ -27,7 +27,7 @@ _start:
     // Open the first argument early to prevent race TOCTOU
     add sp, sp, #0x8
     ldr r0, [sp]
-    bl open_file
+    bl fopen
     mov r0, r15
 
     // Print init message
@@ -55,6 +55,9 @@ _start:
     // Allocate memory with mmap
     ldr r0, =mslot0
     mov r1, #0x1000
+    ldr r2, =mslot0_s
+    str r1, [r2]
+    ldr r1, =mslot0_s
     bl alloc_mem
 
     bl error

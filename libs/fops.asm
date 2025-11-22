@@ -14,7 +14,7 @@ fread:
     // r2 : Count (bytes)
     
     // Read from the fd
-    r7, #0x3
+    mov r7, #0x3
     swi 0
     
     // Check if the return value is 0 (error)

@@ -1,6 +1,7 @@
 .section .data
 
 mslot0: .word 0
+mslot0_s: .word 0
 
 .section .text
 
@@ -11,16 +12,25 @@ mslot0: .word 0
 .global alloc_mem
 .global free_mem
 
-// Global variables
+// Global variables - memory slots and sizes
 .global mslot0
+.global mslot0_s
 
 alloc_mem:
     // Allocate memory - will always have read and write permissions
-    // r0 : Address of the memory slot where the result will be stored
-    // r1 : Size of the memory
+    // r0 : Address of the mslot where the result will be stored
+    // r1 : Address of mslot size of the memory
     push {r11}
     mov r11, sp
     sub sp, sp, #0x10
+
+    // Check if the addr in r0 is NULL before dereferencing it
+    cmp r0, #0x0 
+    beq error
+
+    // Check if the addr of r1 is NULL before dereferencing it
+    cmp r1, #0x0
+    beq error
     
     // Save r0
     str r0, [r11, #-0x4]
@@ -28,6 +38,7 @@ alloc_mem:
     // Setup mmap2 arguments
     // r1 already contains size
     eor r0, r0      // Addr: NULL
+    ldr r1, [r1]    // Size of allocation
     mov r2, #0x3    // PROT_READ | PROT_WRITE
     mov r3, #0x22   // MAP_PRIVATE | MAP_ANONYMOUS
     mov r4, #-0x1   // Fd: NULL
@@ -35,14 +46,13 @@ alloc_mem:
     mov r7, #0xc0   // Mmap2 : Syscall number 192
     swi 0
 
-    // Put the result into the address specified in r0 
-    // Check if the addr in r0 was NULL before dereferencing it
-    mov r1, r0
-    ldr r0, [r11, #-0x4]
-    cmp r0, #0x0 
-    beq error
+    // Check result - mmap2 returns -1 on failure
+    cmp r0, #0x0
+    bleq error
 
     // Store value and return with status 0
+    mov r1, r0
+    ldr r0, [r11, #-0x4]
     str r1, [r0]
     mov r0, #0x0
     mov sp, r11
