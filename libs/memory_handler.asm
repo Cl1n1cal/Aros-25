@@ -1,3 +1,7 @@
+.section .data
+
+mslot0: .word 0
+
 .section .text
 
 // External functions
@@ -45,6 +49,3 @@ alloc_mem:
     pop {r11}
     bx lr
 
-.section .data
-
-mslot0: .word 0
