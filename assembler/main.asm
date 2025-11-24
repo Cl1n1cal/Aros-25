@@ -1,6 +1,3 @@
-.section .data
-error_msg: .asciz "Usage: ./Aros-25-as test.aros"
-fhandle: .word 0
 
 .section .text
 
@@ -8,11 +5,13 @@ fhandle: .word 0
 .extern error
 .extern print
 .extern strlen
-.extern open_file
+.extern fopen
+.extern fread
 
 // Memory handling
 .extern alloc_mem
 .extern mslot0
+.extern mslot0_s
 
 .global _start
 
@@ -33,7 +32,10 @@ _start:
 
     // Allocate memory before reading the file
     ldr r0, =mslot0
-    mov r1, #0x1000
+    ldr r1, =mslot0_s
+    mov r2, #0x1000
+    str r2, [r1]
+
     bl alloc_mem
 
     // Read from the file and into the allocated memory
@@ -46,6 +48,7 @@ _start:
     // r2
     ldr r2, =mslot0_s // r2
     ldr r2, [r2]
+    bl fread
 
 
 
@@ -57,3 +60,6 @@ print_err_and_exit:
     bl print
     bne error
 
+.section .data
+error_msg: .asciz "Usage: ./Aros-25-as test.aros"
+fhandle: .word 0
