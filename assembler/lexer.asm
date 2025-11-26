@@ -39,7 +39,9 @@ _start:
     // Function epilogue
     add sp, sp, #0x10
 
-copy_byte_to_IB:
+    // TODO: Maybe call local labels with '.' first
+
+.copy_byte_to_IB:
     // r0: The byte to copy
     // r1: Index 0-7
 
