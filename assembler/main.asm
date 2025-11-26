@@ -40,15 +40,19 @@ _start:
 
     // Read from the file and into the allocated memory
     // r0
-    ldr r1, =fhandle
-    ldr r0, [r1]
+    ldr r0, =fhandle
+    ldr r0, [r0]
     // r1
-    ldr r2, =mslot0
-    ldr r1, [r2]
+    ldr r1, =mslot0
+    ldr r1, [r1]
     // r2
     ldr r2, =mslot0_s // r2
     ldr r2, [r2]
     bl fread
+
+    // Call the lexer with the memory region that contains the program
+    ldr r0, =mslot0
+    bl lexer
 
 
 
