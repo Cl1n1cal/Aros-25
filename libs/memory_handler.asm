@@ -16,6 +16,9 @@ mslot0_s: .word 0
 .global mslot0
 .global mslot0_s
 
+.global mslot1
+.global mslot1_s
+
 alloc_mem:
     // Allocate memory - will always have read and write permissions
     // r0 : Address of the mslot where the result will be stored
