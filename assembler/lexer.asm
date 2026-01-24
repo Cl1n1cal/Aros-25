@@ -61,6 +61,7 @@ _start:
     // Copy line to IB. Then increment the program buffer counter and update program buffer pointer.
     mov r0, r5
     bl .copy_line_to_IB // Returns amount of bytes copied
+    // Update the global ptr and counter
     add r6, r6, r0
     add r5, r5, r0
 
