@@ -30,7 +30,9 @@ CPU_ASSEMBLED_OBJS = $(wildcard $(CPU_BUILD_DIR)/*.o)
 ASSEMBLER_ASSEMBLED_OBJS = $(wildcard $(ASSEMBLER_BUILD_DIR)/*.o)
 LIBS_ASSEMBLED_OBJS = $(wildcard $(LIBS_BUILD_DIR)/*.o)
 
-all : Aros-25-cpu Aros-25-as
+# Below line will asm the asm as well
+# Aros-25-as
+all : Aros-25-cpu 
 
 # Linking
 Aros-25-cpu: $(CPU_OBJS) $(LIBS_OBJS)
