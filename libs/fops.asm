@@ -9,6 +9,8 @@
 
 fread:
     // Read an amount of bytes from a file desc. into memory
+    // Returns the amount of bytes read
+
     // r0 : Fd
     // r1 : Buffer address
     // r2 : Count (bytes)
