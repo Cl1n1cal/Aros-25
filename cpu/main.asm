@@ -2,6 +2,9 @@
 init_msg: .asciz "[Aros-25] Initializing Aros-25 CPU\n"
 load_msg: .asciz "[Aros-25] Loading program argument: "
 
+// For storing the fd of the first argument
+arg1_fd: .word 0
+
 .section .text
 
 // External functions
@@ -24,11 +27,12 @@ _start:
     cmp r0, #0x2
     bne error
 
-    // Open the first argument early to prevent race TOCTOU
+    // Open the first argument
     add sp, sp, #0x8
     ldr r0, [sp]
     bl fopen
-    mov r0, r15
+    ldr r1, =arg1_fd
+    str r0, [r1]
 
     // Print init message
     ldr r0, =init_msg
@@ -59,5 +63,39 @@ _start:
     str r1, [r2]
     ldr r1, =mslot0_s
     bl alloc_mem
+
+    // Read the bytes from the first program argument into the memory
+    ldr r0, =arg1_fd
+    ldr r0, [r0]
+    ldr r1, =mslot0
+    ldr r1, [r1]
+    ldr r2, =mslot0_s
+    ldr r2, [r2]
+    bl fread
+
+    // Check the executable file signature
+    // cannot mov directly into r1 because of number size
+    ldr r0, =mslot0
+    ldr r0, [r0]
+    
+    // Check upper nibble
+    ldr r1, [r0]
+    lsr r1, #0x10
+    mov r2, #0x736f
+    cmp r1, r2
+    bne error
+
+    // Check lower nibble
+    ldr r1, [r0]
+    mov r3, #0xffff 
+    and r1, r3
+    mov r2, #0x7261
+    cmp r1, r2
+    bne error
+
+    // Start executing the memory
+    ldr r0, =mslot0
+    ldr r0, [r0]
+    bl interpret_program
 
     bl error
