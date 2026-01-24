@@ -1,61 +1,63 @@
 .section .text
 
-.extern a
-.extern b
-.extern c
-.extern d
-.extern e
+.extern reg_a
+.extern reg_b
+.extern reg_c
+.extern reg_d
+.extern reg_e
 
-.global instr_mov
+.extern error
 
-instr_mov:
-    // Find the correct register to load the value into 
-    // r0 : register
-    // r1 : value
+.global instr_mov_val
+
+instr_mov_val:
+    // Mov a value into a register. A value is 4 bytes
+    // r0: pc addr
+    // r1: opcode
+
+    // Fetch target register and fetch value
+    ldrb r2, [r0, #0x1]
+    ldr r3, [r0, #0x2]
 
     // Switch on the register operand
-    cmp r0, #0x61 // a 
-    beq mov_a
-    cmp r0, #0x62 // b
-    beq mov_b
-    cmp r0, #0x63 // c
-    beq mov_c
-    cmp r0, #0x64 // d
-    beq mov_d
-    cmp r0, #0x65 // e
-    beq mov_e
+    cmp r2, #0x61 // reg_a
+    beq .mov_a
+    cmp r2, #0x62 // reg_b
+    beq .mov_b
+    cmp r2, #0x63 // reg_c
+    beq .mov_c
+    cmp r2, #0x64 // reg_d
+    beq .mov_d
+    cmp r2, #0x65 // reg_e
+    beq .mov_e
     b error
 
-mov_a:
-    ldr r0, =a
-    str r1, [r0]
-    b done
+.mov_a:
+    ldr r4, =reg_a
+    str r3, [r4]
+    b .done
 
-mov_b:
-    ldr r0, =b
-    str r1, [r0]
-    b done
+.mov_b:
+    ldr r4, =reg_b
+    str r3, [r4]
+    b .done
 
-mov_c:
-    ldr r0, =c
-    str r1, [r0]
-    b done
+.mov_c:
+    ldr r4, =reg_c
+    str r3, [r4]
+    b .done
 
-mov_d:
-    ldr r0, =d
-    str r1, [r0]
-    b done
+.mov_d:
+    ldr r4, =reg_d
+    str r3, [r4]
+    b .done
 
-mov_e:
-    ldr r0, =e
-    str r1, [r0]
-    b done
+.mov_e:
+    ldr r4, =reg_e
+    str r3, [r4]
+    b .done
 
-done:
+.done:
+    // Set the size of a mov_val instr as the return value
+    mov r0, #0x6
     bx lr
-
-error:
-    // Exit with error 0xff
-    mov r0, #0xff
-    mov r7, #1
-    swi 0
