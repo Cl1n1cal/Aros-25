@@ -9,6 +9,12 @@
 interpret_program:
     // Set the pc to the start of program memory and exectute instructions from there
     // r0: Start address of the executable program
+    
+    // Prologue
+    push {r11, lr}
+    mov r11, sp
+    sub sp, sp, #0x10
+
 
     // Inc start addr by 4 to skip program signature
     add r0, r0, #0x4
@@ -20,13 +26,10 @@ interpret_program:
 .interpret_loop:
 // Runs through the program instructions using the pc
 
-    push {r11, lr}
-    mov r11, sp
-    sub sp, sp, #0x10
-
     // Find the size of the instruction using the opcode
     ldr r1, =reg_pc
-    ldr r0, [r1]
+    ldr r1, [r1]
+    ldrb r0, [r1]                           // Opcode of current instruction
     bl .get_instr_size
     str r0, [r11, #-0x4]                    // Store the instruction size
 
@@ -61,6 +64,10 @@ interpret_program:
 
     cmp r0, #0x2                    // Mov reg
     moveq r0, #0x3                  // Size of mov reg
+    beq .get_instr_size_done
+
+    cmp r0, #0x2                    // Add
+    moveq r0, #0x3                  // Size of add
     beq .get_instr_size_done
 
 .get_instr_size_done:
