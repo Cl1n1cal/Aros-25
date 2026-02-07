@@ -7,13 +7,11 @@
 
 interpret_instr:
     // Find the matching opcode
-    // This part of the program uses the pc for reference
+    // r0: Memory address of pc
 
     push {r14}
 
     // Fetch instruction opcode
-    ldr r0, =reg_pc
-    ldr r0, [r0]
     ldrb r1, [r0]
 
     cmp r1, #0x1 // mov value

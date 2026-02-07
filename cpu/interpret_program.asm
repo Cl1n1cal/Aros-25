@@ -18,17 +18,50 @@ interpret_program:
     str r0, [r1]
 
 .interpret_loop:
-    // Returns size of instruction
-    // Uses the pc to fetch instructions
+// Runs through the program instructions using the pc
+
+    push {r11, lr}
+    mov r11, sp
+    sub sp, sp, #0x10
+
+    // Find the size of the instruction using the opcode
+    ldr r1, =reg_pc
+    ldr r0, [r1]
+    bl .get_instr_size
+    str r0, [r11, #-0x4]                    // Store the instruction size
+
+    // Interpret the instruction
+    ldr r1, =reg_pc
+    ldr r0, [r1]                            // Use the actual memory address of the pc
     bl interpret_instr
 
-    // Incremenet the pc with the return value of interpret_instr
+    // Increment the program counter using the previously fetched size
+    ldr r0, [r11, #-0x4]                    // Fetched the saved instruction size
     ldr r2, =reg_pc
-    ldr r1, [r2]
-    add r1, r1, r0
-    str r1, [r2]
+    ldr r1, [r2]                            // Get the memory address of the pc
+    add r1, r1, r0                          // Increment the address of the pc
+    str r1, [r2]                            // Store the new address of the pc
 
     // Run next instr
     b .interpret_loop
 
+    // Epilogue
+    mov sp, r11
+    pop {r11, lr}
+    bx lr
 
+.get_instr_size:
+// Uses a switch statement to find the opcode
+// Return: The size of the instruction
+// r0: The opcode value of the instruction
+    
+    cmp r0, #0x1                    // Mov val
+    moveq r0, #0x6                  // Size of mov val
+    beq .get_instr_size_done
+
+    cmp r0, #0x2                    // Mov reg
+    moveq r0, #0x3                  // Size of mov reg
+    beq .get_instr_size_done
+
+.get_instr_size_done:
+    bx lr
