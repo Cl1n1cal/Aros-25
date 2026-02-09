@@ -18,12 +18,21 @@
 * 4. Repeat step 2 and 3 until the program buffer is empty
 */
 
+.section .data
+
+// Intermediate buffer to store char arrays.
+// The buffer will be analyzed before emmiting a token
+IB: .zero 0x50
+
+.equ IDENTIFIER, 0x1
+
+.mslot1: .word 0
+.mslot1_s: .word 0
+
 .section .text
 
 .extern error
 .extern alloc_mem
-.extern mslot1
-.extern mslot1_s
 
 // Imagine that this is the function: lexer()
 .global _start
@@ -42,8 +51,8 @@ _start:
     str r1, [r11, #-0x8]
 
     // Allocate the token buffer
-    ldr r0, =mslot1
-    ldr r1, =mslot1_s
+    ldr r0, =.mslot1
+    ldr r1, =.mslot1_s
     mov r2, 0x1000
     str r2, [r1]
     bl alloc_mem
@@ -132,10 +141,3 @@ _start:
     mov r0, r1
     bx lr
 
-.section .data
-
-// Intermediate buffer to store char arrays.
-// The buffer will be analyzed before emmiting a token
-IB: .zero 0x50
-
-.equ IDENTIFIER, 0x1

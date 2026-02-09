@@ -1,10 +1,6 @@
 .section .text
 
 .extern reg_a
-.extern reg_b
-.extern reg_c
-.extern reg_d
-.extern reg_e
 
 .extern error
 .extern find_register_index

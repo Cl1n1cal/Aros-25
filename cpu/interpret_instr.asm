@@ -32,6 +32,9 @@ interpret_instr:
     cmp r1, #0x3 // add
     beq instr_add
 
+    cmp r1, #0x6 // syscall
+    beq instr_syscall
+
 .interpret_instr_done:
     // Epilogue
     mov sp, r11

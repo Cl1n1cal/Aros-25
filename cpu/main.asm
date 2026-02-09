@@ -5,6 +5,12 @@ load_msg: .asciz "[Aros-25] Loading program argument: "
 // For storing the fd of the first argument
 arg1_fd: .word 0
 
+.mslot0: .word 0
+.mslot0_s: .word 0
+
+stack: .word 0
+stack_s: .word 0
+
 .section .text
 
 // External functions
@@ -15,11 +21,11 @@ arg1_fd: .word 0
 .extern fopen
 .extern alloc_mem
 .extern free_mem
-
-// External memory
-.extern mslot0
+.extern reg_bp
 
 .global _start
+.global stack
+.global stack_s
 
 _start:
     // Check number of cmd line arguments is 2
@@ -56,26 +62,45 @@ _start:
     bl print
     bl print_newline
 
-    // Allocate memory with mmap
-    ldr r0, =mslot0
+    // Allocate program memory with mmap
+    ldr r0, =.mslot0
     mov r1, #0x1000
-    ldr r2, =mslot0_s
+    ldr r2, =.mslot0_s
     str r1, [r2]
-    ldr r1, =mslot0_s
+    ldr r1, =.mslot0_s
     bl alloc_mem
 
-    // Read the bytes from the first program argument into the memory
+    // Allocate stack memory for cpu
+    ldr r0, =stack
+    mov r1, #0x200
+    ldr r2, =stack_s
+    str r1, [r2]
+    ldr r1, =stack_s
+    bl alloc_mem
+
+    // Setup the stack - grows downwards like normally
+    ldr r0, =stack                   // Load stack address
+    ldr r0, [r0]                    // Load mmap memory at stack addr
+    ldr r1, =reg_bp                 // Load address of base pointer
+    ldr r2, =stack_s                // Load address of stack size
+    ldr r2, [r2]                    // Load value at stack size address
+    add r4, r0, r2                  // Get the largest stack address
+    str r4, [r1]                    // Store the largest stack address into reb_bp
+    ldr r0, =reg_sp                 // Load the address of stack pointer
+    str r4, [r0]                    // Set the stack pointer to the same value as base pointer
+
+    // Read the bytes from the first program argument into the program memory
     ldr r0, =arg1_fd
     ldr r0, [r0]
-    ldr r1, =mslot0
+    ldr r1, =.mslot0
     ldr r1, [r1]
-    ldr r2, =mslot0_s
+    ldr r2, =.mslot0_s
     ldr r2, [r2]
     bl fread
 
     // Check the executable file signature
     // cannot mov directly into r1 because of number size
-    ldr r0, =mslot0
+    ldr r0, =.mslot0
     ldr r0, [r0]
     
     // Check upper nibble
@@ -94,7 +119,7 @@ _start:
     bne error
 
     // Start executing the memory
-    ldr r0, =mslot0
+    ldr r0, =.mslot0
     ldr r0, [r0]
     bl interpret_program
 
