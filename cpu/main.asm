@@ -86,7 +86,7 @@ _start:
     ldr r1, =reg_bp                 // Load address of base pointer
     ldr r2, =stack_s                // Load address of stack size
     ldr r2, [r2]                    // Load value at stack size address
-    sub r2, r2, #0x4                // Sub 4 bytes since we are 0 indexed
+    sub r2, r2, #0x8                // Sub 8 bytes since we are 0 indexed and we want 1 guard memory slot so we don't go OOB when popping
     add r4, r0, r2                  // Get the largest stack address
     str r4, [r1]                    // Store the largest stack address into reg_bp
     ldr r0, =reg_sp                 // Load the address of stack pointer

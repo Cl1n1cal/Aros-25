@@ -74,6 +74,10 @@ interpret_program:
     moveq r0, #0x2                  // Size of push
     beq .get_instr_size_done
 
+    cmp r0, #0x5                    // Pop
+    moveq r0, #0x2                  // Size of pop
+    beq .get_instr_size_done
+
     cmp r0, #0x6                    // Syscall
     moveq r0, #0x1                  // Size of syscall
     beq .get_instr_size_done

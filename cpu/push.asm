@@ -18,7 +18,7 @@
 .global instr_push
 
 instr_push:
-// Increments reg_sp by 4 bytes (1 address) and writes value at address
+// Decrement reg_sp by 4 bytes (1 address) and writes value at address
 // Should not be able to push beyond the top of the stack.
 // Using the stack address (contains in stack varaiable from main.asm) for guarding top of stack
 // r0: The memory address of pc
@@ -37,7 +37,7 @@ instr_push:
     add r0, r0, r1                      // Add the base address and the index-offset
     ldr r0, [r0]                        // Load the register value at the register address (to be pushed to the stack)
 
-    // Increment reg_sp before writing to the stack
+    // Decrement reg_sp before writing to the stack
     ldr r2, =reg_sp                     // Load the address of reg_sp
     ldr r2, [r2]                        // Load the memory address at reg_sp
     sub r2, r2, #0x4                    // Subtract (stack grows downwards) the stack address by 1 memory slot (0x4 bytes)

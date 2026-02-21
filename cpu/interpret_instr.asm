@@ -46,7 +46,7 @@ interpret_instr:
     moveq r2, #0x3                          // instr_push index
     beq .jump_table
 
-    cmp r1, #0x4                            // push
+    cmp r1, #0x5                            // pop
     moveq r2, #0x4                          // instr_pop index
     beq .jump_table
 
