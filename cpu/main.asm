@@ -68,26 +68,30 @@ _start:
     ldr r2, =.mslot0_s
     str r1, [r2]
     ldr r1, =.mslot0_s
+    eor r3, r3, r3                  // No extra flags
     bl alloc_mem
 
     // Allocate stack memory for cpu
     ldr r0, =stack
-    mov r1, #0x200
+    mov r1, #0x1000
     ldr r2, =stack_s
     str r1, [r2]
     ldr r1, =stack_s
+    eor r3, r3                      // No extra flags
     bl alloc_mem
 
     // Setup the stack - grows downwards like normally
-    ldr r0, =stack                   // Load stack address
+    ldr r0, =stack                  // Load stack address
     ldr r0, [r0]                    // Load mmap memory at stack addr
     ldr r1, =reg_bp                 // Load address of base pointer
     ldr r2, =stack_s                // Load address of stack size
     ldr r2, [r2]                    // Load value at stack size address
+    sub r2, r2, #0x4                // Sub 4 bytes since we are 0 indexed
     add r4, r0, r2                  // Get the largest stack address
-    str r4, [r1]                    // Store the largest stack address into reb_bp
+    str r4, [r1]                    // Store the largest stack address into reg_bp
     ldr r0, =reg_sp                 // Load the address of stack pointer
     str r4, [r0]                    // Set the stack pointer to the same value as base pointer
+
 
     // Read the bytes from the first program argument into the program memory
     ldr r0, =arg1_fd

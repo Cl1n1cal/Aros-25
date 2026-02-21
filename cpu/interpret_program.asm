@@ -66,8 +66,12 @@ interpret_program:
     moveq r0, #0x3                  // Size of mov reg
     beq .get_instr_size_done
 
-    cmp r0, #0x2                    // Add
+    cmp r0, #0x3                    // Add
     moveq r0, #0x3                  // Size of add
+    beq .get_instr_size_done
+
+    cmp r0, #0x4                    // Push
+    moveq r0, #0x2                  // Size of push
     beq .get_instr_size_done
 
     cmp r0, #0x6                    // Syscall

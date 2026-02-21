@@ -11,6 +11,7 @@ alloc_mem:
     // Allocate memory - will always have read and write permissions
     // r0 : Address of the mslot where the result will be stored
     // r1 : Address of mslot size of the memory
+    // r3 : Additional flags
     push {r11}
     mov r11, sp
     sub sp, sp, #0x10
@@ -28,13 +29,13 @@ alloc_mem:
 
     // Setup mmap2 arguments
     // r1 already contains size
-    eor r0, r0      // Addr: NULL
-    ldr r1, [r1]    // Size of allocation
-    mov r2, #0x3    // PROT_READ | PROT_WRITE
-    mov r3, #0x22   // MAP_PRIVATE | MAP_ANONYMOUS
-    mov r4, #-0x1   // Fd: NULL
-    str r0, [sp]    // Offset: 0 (Given in 4096 byte blocks on arm 32)
-    mov r7, #0xc0   // Mmap2 : Syscall number 192
+    eor r0, r0                          // Addr: NULL
+    ldr r1, [r1]                        // Size of allocation
+    mov r2, #0x3                        // PROT_READ | PROT_WRITE
+    orr r3, #0x22                       // MAP_PRIVATE | MAP_ANONYMOUS
+    mov r4, #-0x1                       // Fd: -1
+    str r0, [sp]                        // Offset: 0 (Given in 4096 byte blocks on arm 32)
+    mov r7, #0xc0                       // Mmap2 : Syscall number 192
     swi 0
 
     // Check result - mmap2 returns -1 on failure

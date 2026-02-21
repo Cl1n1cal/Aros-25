@@ -7,6 +7,7 @@
 .extern reg_f
 .extern reg_g
 .extern reg_s
+
 .extern find_register_index
 
 .global instr_add
