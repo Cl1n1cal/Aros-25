@@ -1,8 +1,8 @@
 # Assembler and linker
-AS = arm-linux-gnueabi-as
+AS = arm-linux-gnueabi-as 	
 
 LD = arm-linux-gnueabi-gcc-13
-LD_FLAGS = -nostdlib
+LD_FLAGS = -nostdlib -z noexecstack -Wl,-z,relro
 
 # .asm directories
 LIBS_DIR := libs

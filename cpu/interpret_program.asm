@@ -82,5 +82,13 @@ interpret_program:
     moveq r0, #0x1                  // Size of syscall
     beq .get_instr_size_done
 
+    cmp r0, #0x7                    // Store
+    moveq r0, #0x3                  // Size of store
+    beq .get_instr_size_done
+
+    cmp r0, #0x8                    // Load
+    moveq r0, #0x3                  // Size of load
+    beq .get_instr_size_done
+
 .get_instr_size_done:
     bx lr

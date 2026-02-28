@@ -15,6 +15,9 @@
 .global reg_bp
 .global reg_sp
 
+// Other
+.global RW_guard
+
 .section .data
 
 // General purpose registers 
@@ -31,6 +34,9 @@ reg_s: .word 0
 reg_pc: .word 0
 reg_bp: .word 0
 reg_sp: .word 0
+
+// Other
+.set RW_guard, 0x40803000
 
 .section .text
 

@@ -12,3 +12,4 @@ sudo apt install gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi
 3. Add two registers and store in a third: add a, b, c (add b and c, store the result in a)
 4. Push from register to the stack
 5. Pop from the stack
+6. Push from the stack

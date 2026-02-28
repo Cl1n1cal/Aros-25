@@ -7,12 +7,16 @@ instr_jump_table:
     .word instr_push
     .word instr_pop
     .word instr_syscall
+    .word instr_store
+    .word instr_load
 
 .extern instr_mov_val
 .extern instr_mov_reg
 .extern instr_add
 .extern instr_push
 .extern instr_pop
+.extern instr_store
+.extern instr_load
 .extern pc
 
 .global interpret_instr
@@ -52,6 +56,12 @@ interpret_instr:
 
     cmp r1, #0x6                            // syscall
     moveq r2, #0x5                          // instr_syscall index
+
+    cmp r1, #0x7                            // store
+    moveq r2, #0x6                          // instr_store index
+
+    cmp r1, #0x8                            // load
+    moveq r2, #0x7                          // instr_load index
 
 .jump_table:
     // Calculate the correct function address in the instr_jump_table

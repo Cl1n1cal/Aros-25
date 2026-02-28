@@ -28,7 +28,7 @@ instr_add:
     // Get the index of the second register
     ldr r2, [r11, #-0x4]        // Restore the pc pointer
     ldrb r0, [r2, #0x2]         // Load the value of the second register
-    bl find_register_index     // Get the index of the register
+    bl find_register_index      // Get the index of the register
     str r0, [r11, #-0xc]        // Save the index of the second register for later
 
     // Get the index of the third register
