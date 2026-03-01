@@ -67,7 +67,7 @@ interpret_program:
     beq .get_instr_size_done
 
     cmp r0, #0x3                    // Add
-    moveq r0, #0x3                  // Size of add
+    moveq r0, #0x4                  // Size of add
     beq .get_instr_size_done
 
     cmp r0, #0x4                    // Push

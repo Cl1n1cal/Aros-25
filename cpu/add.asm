@@ -9,7 +9,7 @@
 .global instr_add
 
 instr_add:
-// Adds the value of two registers like Arm does: r0, r1, x0 for example
+// Adds the value of two registers like Arm does: add r0, r1, r2 for example
 // r0: The memory address of pc
 
 
