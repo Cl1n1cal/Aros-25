@@ -23,6 +23,10 @@ instr_syscall:
     mov r11, sp
     sub sp, sp, #0x10
 
+    ldr r5, =reg_e
+    mov r4, #0x0
+    str r4, [r5]
+
     ldr r0, =reg_s                      // Get the address of reg_s
     ldr r0, [r0]                        // Get the value at the address of reg_s
 
@@ -32,8 +36,8 @@ instr_syscall:
     cmp r0, #0x1                        // Syscall: Read
     beq .syscall_read
 
-    //cmp r0, #0x2                      // Syscall: Write
-    //beq .syscall_write                // Not implemented
+    cmp r0, #0x2                      // Syscall: Write
+    beq .syscall_write            
 
     cmp r0, #0x3                        // Syscall: Mmap2
     beq .syscall_mmap
@@ -52,6 +56,7 @@ instr_syscall:
 // Uses registers a, b and c to get proper values
 // Returns: Fd of the opened file
     // Setup the syscall
+    ldr r4, =reg_e // FAKE BAIT
     ldr r0, =reg_a                      // Get the address of reg_a
     ldr r0, [r0]                        // Get the value at reg_a (should be memory pointer)
     ldr r1, =reg_b                      // Flags
@@ -73,6 +78,7 @@ instr_syscall:
 // Returns: Number of bytes read
 
     // Setup the syscall
+    ldr r4, =reg_e // FAKE BAIT
     ldr r0, =reg_a                      // Get the address of reg_a
     ldr r0, [r0]                        // Get the value at reg_a (should be an fd)
     ldr r1, =reg_b                      // Should be pointer to writable memory
@@ -88,11 +94,36 @@ instr_syscall:
     
     b .instr_syscall_done
 
+.syscall_write:
+// Enables the program to read from memory
+// DOES NOT WORK
+// Returns: Number of bytes read
+    // Setup the syscall
+    ldr r4, =reg_e // FAKE BAIT
+    ldr r4, [r4]   // FAKE BAIT
+    ldr r0, =reg_a                      // Get the address of reg_a
+    ldr r0, [r0]                        // Get the value at reg_a (should be an fd)
+    ldr r1, =reg_b                      // Should be pointer to writable memory
+    ldr r1, [r1]
+    ldr r2, =reg_c                      // Count bytes to read
+    ldr r2, [r2]
+    mov r7, #0x4                        // Syscall write
+    ldr r4, [r4]
+    swi 0
+
+    // Put the result into reg_a
+    ldr r1, =reg_a                      // Get the address of reg_a
+    str r0, [r1]                        // Store the resulting amount of bytes read in reg_a
+    
+    b .instr_syscall_done
+
 
 .syscall_mmap:
 // Enables the program to allocate memory with the mmap2 syscall
 // Uses the aros registers to get the values
 // Return: Reg_a will contain the memory address of the allocation
+
+    ldr r4, =reg_e // FAKE BAIT
     
     ldr r1, =reg_a                      // Get the address of reg_a
     ldr r1, [r1]                        // Get the value at reg_a
@@ -116,6 +147,8 @@ instr_syscall:
 // Calls the exit syscall with the value in reg_a
 // Maximum supported exit code is 0xff
 // Return: Void
+
+    ldr r4, =reg_e // FAKE BAIT
 
     ldr r0, =reg_a                      // Get the address of reg_a
     ldr r0, [r0]                        // Get the value at reg_a

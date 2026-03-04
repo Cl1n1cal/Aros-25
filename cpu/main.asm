@@ -27,18 +27,21 @@ stack_s: .word 0
 .global stack
 .global stack_s
 
+
+// MODIFIED FOR CTF. DOES NOT READ FILE FROM DISK BUT TAKES INPUT FROM STDIN.
+
 _start:
     // Check number of cmd line arguments is 2
-    ldr r0, [sp]
-    cmp r0, #0x2
-    bne error
+    //ldr r0, [sp]
+    //cmp r0, #0x2
+    //bne error
 
     // Open the first argument
-    add sp, sp, #0x8
-    ldr r0, [sp]
-    bl fopen
-    ldr r1, =arg1_fd
-    str r0, [r1]
+    //add sp, sp, #0x8
+    //ldr r0, [sp]
+    //bl fopen
+    //ldr r1, =arg1_fd
+    //str r0, [r1]
 
     // Print init message
     ldr r0, =init_msg
@@ -48,19 +51,19 @@ _start:
     bl print
 
     // Print load program message
-    ldr r0, =load_msg
-    bl strlen
-    mov r1, r0
-    ldr r0, =load_msg
-    bl print
+    //ldr r0, =load_msg
+    //bl strlen
+    //mov r1, r0
+    //ldr r0, =load_msg
+    //bl print
 
     // Print first program argument
-    ldr r0, [sp]
-    bl strlen
-    mov r1, r0
-    ldr r0, [sp]
-    bl print
-    bl print_newline
+    //ldr r0, [sp]
+    //bl strlen
+    //mov r1, r0
+    //ldr r0, [sp]
+    //bl print
+    //bl print_newline
 
     // Allocate program memory with mmap
     ldr r0, =.mslot0
@@ -94,13 +97,21 @@ _start:
 
 
     // Read the bytes from the first program argument into the program memory
-    ldr r0, =arg1_fd
-    ldr r0, [r0]
-    ldr r1, =.mslot0
-    ldr r1, [r1]
-    ldr r2, =.mslot0_s
-    ldr r2, [r2]
-    bl fread
+    //ldr r0, =arg1_fd
+    //ldr r0, [r0]
+    //ldr r1, =.mslot0
+    //ldr r1, [r1]
+    //ldr r2, =.mslot0_s
+    //ldr r2, [r2]
+    //bl fread
+
+    // Read 0x1000 bytes from stdin into the program buffer
+    mov r0, #0x0                    // Stdin
+    ldr r1, =.mslot0                // Load the address of mslot0
+    ldr r1, [r1]                    // Load the memory address at mslot0
+    mov r2, #0x1000                 // Set count bytes to 0x1000
+    mov r7, #0x3                    // Read syscall
+    swi 0
 
     // Check the executable file signature
     // cannot mov directly into r1 because of number size

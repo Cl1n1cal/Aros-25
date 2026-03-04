@@ -13,10 +13,9 @@ WORKDIR /app
 
 # Copy your ARM binary and input file
 COPY Aros-25-cpu .
-COPY test.aros .
 
 # Make binary executable
 RUN chmod +x Aros-25-cpu
 
 # Run the ARM binary via qemu-arm
-CMD ["qemu-arm", "./Aros-25-cpu", "test.aros"]
+CMD ["qemu-arm", "./Aros-25-cpu"]
