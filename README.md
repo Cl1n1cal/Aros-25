@@ -13,3 +13,4 @@ sudo apt install gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi
 4. Push from register to the stack
 5. Pop from the stack
 6. Push from the stack
+7. Different types of syscalls
